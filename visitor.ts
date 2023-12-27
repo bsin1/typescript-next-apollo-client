@@ -420,7 +420,6 @@ export class ReactApolloVisitor extends ClientSideBaseVisitor<
     this.imports.add(
       "import { useQuery, useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr';"
     );
-    this.imports.add("import { getClient } from '@/lib/apolloClient';");
     this.imports.add(this.getDefaultOptions());
 
     const typeToHook = (type: string): string => {
@@ -510,29 +509,29 @@ export class ReactApolloVisitor extends ClientSideBaseVisitor<
         `export type ${suspenseOperationName}HookResult = ReturnType<typeof use${suspenseOperationName}>;`
       );
 
-      const serverOperationNameFull: string =
-        this.convertName(nodeName, {
-          suffix: pascalCase("ServerQuery"),
-          useTypesPrefix: false,
-        }) + this.config.hooksSuffix;
+      // const serverOperationNameFull: string =
+      //   this.convertName(nodeName, {
+      //     suffix: pascalCase("ServerQuery"),
+      //     useTypesPrefix: false,
+      //   }) + this.config.hooksSuffix;
 
-      const serverOperationName: string =
-        serverOperationNameFull.charAt(0).toLowerCase() +
-        serverOperationNameFull.slice(1);
+      // const serverOperationName: string =
+      //   serverOperationNameFull.charAt(0).toLowerCase() +
+      //   serverOperationNameFull.slice(1);
 
-      hookFns.push(
-        `export function ${serverOperationName}(baseOptions${
-          hasRequiredVariables ? "" : "?"
-        }: ${this.getApolloReactHooksIdentifier()}.${operationType}HookOptions<${operationResultType}, ${operationVariablesTypes}>) {
-          return getClient().query<${operationResultType}, ${operationVariablesTypes}>({ query: ${this.getDocumentNodeVariable(
-          node,
-          documentVariableName
-        )}, variables: baseOptions?.variables});
-        }`
-      );
-      hookResults.push(
-        `export type ${serverOperationName}HookResult = ReturnType<typeof ${serverOperationName}>;`
-      );
+      // hookFns.push(
+      //   `export function ${serverOperationName}(baseOptions${
+      //     hasRequiredVariables ? "" : "?"
+      //   }: ${this.getApolloReactHooksIdentifier()}.${operationType}HookOptions<${operationResultType}, ${operationVariablesTypes}>) {
+      //     return getClient().query<${operationResultType}, ${operationVariablesTypes}>({ query: ${this.getDocumentNodeVariable(
+      //     node,
+      //     documentVariableName
+      //   )}, variables: baseOptions?.variables});
+      //   }`
+      // );
+      // hookResults.push(
+      //   `export type ${serverOperationName}HookResult = ReturnType<typeof ${serverOperationName}>;`
+      // );
     }
 
     return [...hookFns, ...hookResults].join("\n");
